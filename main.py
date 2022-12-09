@@ -53,12 +53,17 @@ async def cmd_start(message: types.Message):
     global ID, Name
     ID = message.from_user.id
     Name = message.from_user.first_name
-
+    msg_text = f'Здравствуйте {Name}, для начала, чтобы наши советы были более персонализироваными, просим ответить на пару вопросов.'
+    await bot.send_message(ID, msg_text)
+    for i in kbs.tips:
+        msg_text = f'Как по шкале от 0 до 10 вы оцените свои способности в {i}'
+        await bot.send_message(ID, msg_text)
     await bot.send_message(ID, 'Какую специальность ВУЗа выбираете?', reply_markup=kbs.st_but)
+
 
 @dp.callback_query_handler(text='arch')
 async def arch_vuz(callback_query: types.CallbackQuery):
-    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует')
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
 
 if __name__ == "__main__":
     # Запуск бота
