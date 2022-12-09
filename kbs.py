@@ -2,6 +2,8 @@ from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButt
     InlineKeyboardButton
 import unicodedata
 
+tips = ['критическое мышление', 'физическая подготовка', 'креативность', 'эмоциональная устойчивость', 'трудолюбие']
+
 nokb = ReplyKeyboardRemove()
 
 btn1 = InlineKeyboardButton('Архитектура и строительство', callback_data='arch')
@@ -12,7 +14,13 @@ btn5 = InlineKeyboardButton('IT', callback_data='it')
 btn6 = InlineKeyboardButton('Искусство', callback_data='pnt')
 btn7 = InlineKeyboardButton('Спорт', callback_data='pe')
 btn8 = InlineKeyboardButton('Медицина', callback_data='med')
-btn9 = InlineKeyboardButton('Инженерные технологии', callback_data='eng')
+btn9 = InlineKeyboardButton('Физико-математические науки', callback_data='eng')
 btn10 = InlineKeyboardButton('Химико-биологические науки', callback_data='chem')
 st_but = InlineKeyboardMarkup(row_width=3)
 st_but.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10)
+
+arch_uni = InlineKeyboardButton('Вуз 1', callback_data='1')
+arch_but = InlineKeyboardMarkup(row_width=2)
+arch_but.add(arch_uni)
+
+
