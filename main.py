@@ -1,3 +1,4 @@
+import asyncio
 import copy
 import logging
 from pprint import pprint
@@ -30,9 +31,10 @@ dp = Dispatcher(bot, storage=MemoryStorage())
 # Объект бота
 # ---
 
+cou = 0
 ID = 0
 Name = ''
-skills = [10, 10, 10, 10, 10]
+skills = []
 # Переменные
 # ---
 
@@ -52,31 +54,97 @@ async def cmd_start(message: types.Message):
     ID = message.from_user.id
     Name = message.from_user.first_name
 
-    msg_text = f'Здравствуйте {Name}, для начала, чтобы наши советы были более персонализироваными, просим ответить на пару вопросов.'
+    msg_text = f'Здравствуйте, {Name}, для начала, чтобы наши советы были более персонализированными, просим ответить на пару вопросов.'
     await bot.send_message(ID, msg_text)
+    await asyncio.sleep(5)
 
-    msg_text = 'Как по шкале от 0 до 10 вы оцените своё критическое мышление'
+    msg_text = 'Как по шкале от 0 до 10 вы оцените своё критическое мышление?'
     await bot.send_message(ID, msg_text)
 
     @dp.message_handler()
-    def crit(message: types.Message):
-        while True:
+    async def crit(message: types.Message):
+        global cou, skills
+        while cou < 5:
             try:
-                crit_razum = int(message.text)
+                if int(message.text) > 10 or int(message.text) < 1:
+                    x = 1 / 0
+                if cou < 5:
+                    skills.append(int(message.text))
+                    print(skills)
+                    if cou == 0:
+                        msg_text = 'Как по шкале от 0 до 10 вы оцените свою физическсую подготовку?'
+                        await bot.send_message(ID, msg_text)
+                    elif cou == 1:
+                        msg_text = 'Как по шкале от 0 до 10 вы оцените свою креативность?'
+                        await bot.send_message(ID, msg_text)
+                    elif cou == 2:
+                        msg_text = 'Как по шкале от 0 до 10 вы оцените свою эмоциональную устойчивость?'
+                        await bot.send_message(ID, msg_text)
+                    elif cou == 3:
+                        msg_text = 'Как по шкале от 0 до 10 вы оцените своё трудолюбие?'
+                        await bot.send_message(ID, msg_text)
+                    elif cou == 4:
+                        await asyncio.sleep(1)
+                        await bot.send_message(ID, 'Какую специальность ВУЗа выбираете?', reply_markup=kbs.st_but)
+                    cou += 1
+                break
             except:
-                pass
+                msg_text = 'Пожалуйста, введите целое число от 0 до 10'
+                await bot.send_message(ID, msg_text)
 
-    await bot.send_message(ID, 'Какую специальность ВУЗа выбираете?', reply_markup=kbs.st_but)
 
 # Запуск бота
 # -----------------------------------------------------
 
+@dp.callback_query_handler(text='menu')
+async def arch_vuz(callback_query: types.CallbackQuery):
+    await bot.send_message(callback_query.from_user.id, 'Какую специальность ВУЗа выбираете?', reply_markup=kbs.st_but)
 
+# Выбор специальности
+# -----------------------------------------------------
+@dp.callback_query_handler(text='arch')
+async def arch_vuz(callback_query: types.CallbackQuery):
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+
+@dp.callback_query_handler(text='dip')
+async def arch_vuz(callback_query: types.CallbackQuery):
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.dip_but)
+
+@dp.callback_query_handler(text='mil')
+async def arch_vuz(callback_query: types.CallbackQuery):
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.mil_but)
 
 @dp.callback_query_handler(text='arch')
 async def arch_vuz(callback_query: types.CallbackQuery):
     await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
 
+@dp.callback_query_handler(text='arch')
+async def arch_vuz(callback_query: types.CallbackQuery):
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+
+@dp.callback_query_handler(text='arch')
+async def arch_vuz(callback_query: types.CallbackQuery):
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+
+@dp.callback_query_handler(text='arch')
+async def arch_vuz(callback_query: types.CallbackQuery):
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+
+@dp.callback_query_handler(text='arch')
+async def arch_vuz(callback_query: types.CallbackQuery):
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+
+@dp.callback_query_handler(text='arch')
+async def arch_vuz(callback_query: types.CallbackQuery):
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+
+@dp.callback_query_handler(text='arch')
+async def arch_vuz(callback_query: types.CallbackQuery):
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+
+
+# Архитектрурные вузы
+# -----------------------------------------------------
 
 @dp.callback_query_handler(text='V1')
 async def vz1(callback_query: types.CallbackQuery):
@@ -114,7 +182,18 @@ async def vz2(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    msg_text = f'Способы получить доп баллы при поступлении для вас:'
+    await bot.send_message(callback_query.from_user.id, msg_text)
+    if len(spisok) != 0:
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
     # V2 вуза
     # -----------------------------------------------------
