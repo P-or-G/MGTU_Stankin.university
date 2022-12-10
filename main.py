@@ -1,6 +1,7 @@
 import asyncio
 import copy
 import logging
+import emoji
 from pprint import pprint
 
 from aiogram.dispatcher import FSMContext
@@ -9,7 +10,6 @@ import kbs
 import requests
 from bs4 import BeautifulSoup
 import json
-import lxml
 
 import aiohttp
 from aiogram import Bot, Dispatcher, executor, types
@@ -56,7 +56,7 @@ async def cmd_start(message: types.Message):
 
     msg_text = f'Здравствуйте, {Name}, для начала, чтобы наши советы были более персонализированными, просим ответить на пару вопросов.'
     await bot.send_message(ID, msg_text)
-    await asyncio.sleep(5)
+    await asyncio.sleep(3)
 
     msg_text = 'Как по шкале от 0 до 10 вы оцените своё критическое мышление?'
     await bot.send_message(ID, msg_text)
@@ -66,7 +66,7 @@ async def cmd_start(message: types.Message):
         global cou, skills
         while cou < 5:
             try:
-                if int(message.text) > 10 or int(message.text) < 1:
+                if int(message.text) > 10 or int(message.text) < 0:
                     x = 1 / 0
                 if cou < 5:
                     skills.append(int(message.text))
@@ -91,6 +91,7 @@ async def cmd_start(message: types.Message):
             except:
                 msg_text = 'Пожалуйста, введите целое число от 0 до 10'
                 await bot.send_message(ID, msg_text)
+                break
 
 
 # Запуск бота
@@ -114,38 +115,37 @@ async def arch_vuz(callback_query: types.CallbackQuery):
 async def arch_vuz(callback_query: types.CallbackQuery):
     await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.mil_but)
 
-@dp.callback_query_handler(text='arch')
+@dp.callback_query_handler(text='ling')
 async def arch_vuz(callback_query: types.CallbackQuery):
-    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.ling_but)
 
-@dp.callback_query_handler(text='arch')
+@dp.callback_query_handler(text='it')
 async def arch_vuz(callback_query: types.CallbackQuery):
-    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.it_but)
 
-@dp.callback_query_handler(text='arch')
+@dp.callback_query_handler(text='pnt')
 async def arch_vuz(callback_query: types.CallbackQuery):
-    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.pnt_but)
 
-@dp.callback_query_handler(text='arch')
+@dp.callback_query_handler(text='pe')
 async def arch_vuz(callback_query: types.CallbackQuery):
-    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.pe_but)
 
-@dp.callback_query_handler(text='arch')
+@dp.callback_query_handler(text='med')
 async def arch_vuz(callback_query: types.CallbackQuery):
-    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.med_but)
 
-@dp.callback_query_handler(text='arch')
+@dp.callback_query_handler(text='chem')
 async def arch_vuz(callback_query: types.CallbackQuery):
-    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.chem_but)
 
-@dp.callback_query_handler(text='arch')
+@dp.callback_query_handler(text='eng')
 async def arch_vuz(callback_query: types.CallbackQuery):
-    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.arch_but)
+    await bot.send_message(callback_query.from_user.id, 'Возможно, вам стоит присмотреться к этим вузам.\nВыберите, какой из них вас интересует', reply_markup=kbs.eng_but)
 
 
-# Архитектрурные вузы
+# Вывод вузов
 # -----------------------------------------------------
-
 @dp.callback_query_handler(text='V1')
 async def vz1(callback_query: types.CallbackQuery):
     global skills
@@ -163,7 +163,19 @@ async def vz1(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+
 
 @dp.callback_query_handler(text='V2')
 async def vz2(callback_query: types.CallbackQuery):
@@ -183,15 +195,15 @@ async def vz2(callback_query: types.CallbackQuery):
             spisok.append(activity[0:2])
         flag = 0
 
-    msg_text = f'Способы получить доп баллы при поступлении для вас:'
-    await bot.send_message(callback_query.from_user.id, msg_text)
     if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
         for i in spisok:
             await asyncio.sleep(2)
-            msg_text = f'{i[0].capitalize()} - вы получите {i[1]} баллов.'
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
             await bot.send_message(callback_query.from_user.id, msg_text)
     else:
-        asyncio.sleep(2)
+        await asyncio.sleep(2)
         msg_text = f'Извините, но мы не можем вам ничего посоветовать'
         await bot.send_message(callback_query.from_user.id, msg_text)
 
@@ -215,7 +227,18 @@ async def vz3(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
     # V3 вуза
     # -----------------------------------------------------
@@ -237,7 +260,19 @@ async def vz4(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
     # V4 вуза
     # -----------------------------------------------------
@@ -259,8 +294,19 @@ async def vz5(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
 
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
     # V5 вуза
     # -----------------------------------------------------
 
@@ -281,7 +327,18 @@ async def vz6(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+        if len(spisok) != 0:
+            msg_text = f'Дополнительне баллы в {name} даются за:'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+            for i in spisok:
+                await asyncio.sleep(2)
+                msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+                await bot.send_message(callback_query.from_user.id, msg_text)
+        else:
+            await asyncio.sleep(2)
+            msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+            await bot.send_message(callback_query.from_user.id, msg_text)
 
     # V6 вуза
     # -----------------------------------------------------
@@ -303,7 +360,19 @@ async def vz7(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
     # V7 вуза
     # -----------------------------------------------------
@@ -325,7 +394,19 @@ async def vz8(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
     # V8 вуза
     # -----------------------------------------------------
@@ -347,7 +428,18 @@ async def vz9(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
     # V9 вуза
     # -----------------------------------------------------
@@ -369,7 +461,18 @@ async def vz10(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
     # V10 вуза
     # -----------------------------------------------------
@@ -391,7 +494,18 @@ async def vz11(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
     # V11 вуза
     # -----------------------------------------------------
@@ -413,7 +527,18 @@ async def vz12(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
     # V12 вуза
     # -----------------------------------------------------
@@ -435,7 +560,18 @@ async def vz13(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await syncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V14')
 async def vz14(callback_query: types.CallbackQuery):
@@ -454,7 +590,18 @@ async def vz14(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V15')
 async def vz15(callback_query: types.CallbackQuery):
@@ -473,7 +620,18 @@ async def vz15(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V16')
 async def vz16(callback_query: types.CallbackQuery):
@@ -492,7 +650,18 @@ async def vz16(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V17')
 async def vz17(callback_query: types.CallbackQuery):
@@ -511,7 +680,18 @@ async def vz17(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V18')
 async def vz18(callback_query: types.CallbackQuery):
@@ -530,7 +710,18 @@ async def vz18(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V19')
 async def vz19(callback_query: types.CallbackQuery):
@@ -549,7 +740,18 @@ async def vz19(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V20')
 async def vz20(callback_query: types.CallbackQuery):
@@ -568,7 +770,18 @@ async def vz20(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V21')
 async def vz21(callback_query: types.CallbackQuery):
@@ -587,7 +800,18 @@ async def vz21(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V22')
 async def vz22(callback_query: types.CallbackQuery):
@@ -606,7 +830,18 @@ async def vz22(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V23')
 async def vz23(callback_query: types.CallbackQuery):
@@ -625,7 +860,18 @@ async def vz23(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V24')
 async def vz24(callback_query: types.CallbackQuery):
@@ -644,7 +890,18 @@ async def vz24(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V25')
 async def vz25(callback_query: types.CallbackQuery):
@@ -663,7 +920,18 @@ async def vz25(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V26')
 async def vz26(callback_query: types.CallbackQuery):
@@ -682,7 +950,18 @@ async def vz26(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V27')
 async def vz27(callback_query: types.CallbackQuery):
@@ -701,7 +980,18 @@ async def vz27(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V28')
 async def vz28(callback_query: types.CallbackQuery):
@@ -720,7 +1010,18 @@ async def vz28(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V29')
 async def vz29(callback_query: types.CallbackQuery):
@@ -739,7 +1040,18 @@ async def vz29(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
 
 @dp.callback_query_handler(text='V30')
 async def vz30(callback_query: types.CallbackQuery):
@@ -758,7 +1070,19 @@ async def vz30(callback_query: types.CallbackQuery):
         if flag == 5:
             spisok.append(activity[0:2])
         flag = 0
-    print(spisok)
+
+    if len(spisok) != 0:
+        msg_text = f'Дополнительне баллы в {name} даются за:'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+        for i in spisok:
+            await asyncio.sleep(2)
+            msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
+            await bot.send_message(callback_query.from_user.id, msg_text)
+    else:
+        await asyncio.sleep(2)
+        msg_text = f'Извините, но мы не можем вам ничего посоветовать'
+        await bot.send_message(callback_query.from_user.id, msg_text)
+
 
 if __name__ == "__main__":
     # Запуск бота
