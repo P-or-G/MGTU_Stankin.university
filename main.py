@@ -72,10 +72,12 @@ async def cmd_start(message: types.Message):
                     # Создание курсора
                     cur = con.cursor()
                     ids = [x[0] for x in cur.execute("select id from forids").fetchall()]
+                    fl = False
                     if int(ID) in ids:
                         msg_text = 'Данные о вас уже есть в базе данных'
                         await bot.send_message(ID, msg_text)
                         cou = 4
+                        fl = True
                     if int(message.text) > 10 or int(message.text) < 0:
                         x = 1 / 0
                     if cou < 5:
@@ -96,6 +98,8 @@ async def cmd_start(message: types.Message):
                             await asyncio.sleep(1)
                             await bot.send_message(ID, 'Какую специальность ВУЗа выбираете?', reply_markup=kbs.st_but)
                             try:
+                                if fl:
+                                    x = 1 // 0
                                 count = cur.execute(f"""INSERT INTO forids(Id, Skills) VALUES('{str(ID)}', '{str(skills)}')""")
                             except:
                                 msg_text = 'Данные о вас уже есть в базе данных'
