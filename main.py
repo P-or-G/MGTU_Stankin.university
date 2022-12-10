@@ -66,42 +66,39 @@ async def cmd_start(message: types.Message):
     async def crit(message: types.Message):
         global cou, skills, ID, Name
         while cou < 5:
-            try:
-                if int(message.text) > 10 or int(message.text) < 0:
-                    x = 1 / 0
-                if cou < 5:
-                    skills.append(int(message.text))
-                    print(skills)
-                    if cou == 0:
-                        msg_text = 'Как по шкале от 0 до 10 вы оцените свою физическсую подготовку?'
-                        await bot.send_message(ID, msg_text)
-                    elif cou == 1:
-                        msg_text = 'Как по шкале от 0 до 10 вы оцените свою креативность?'
-                        await bot.send_message(ID, msg_text)
-                    elif cou == 2:
-                        msg_text = 'Как по шкале от 0 до 10 вы оцените свою эмоциональную устойчивость?'
-                        await bot.send_message(ID, msg_text)
-                    elif cou == 3:
-                        msg_text = 'Как по шкале от 0 до 10 вы оцените своё трудолюбие?'
-                        await bot.send_message(ID, msg_text)
-                    elif cou == 4:
-                        await asyncio.sleep(1)
-                        await bot.send_message(ID, 'Какую специальность ВУЗа выбираете?', reply_markup=kbs.st_but)
-                    cou += 1
-                break
-            except:
-                msg_text = 'Пожалуйста, введите целое число от 0 до 10'
-                await bot.send_message(ID, msg_text)
-                break
-    if len(skills) >= 4:
-        # Подключение к БД
-        con = sqlite3.connect("SKIILS.db")
-        # Создание курсора
-        cur = con.cursor()
-        print(skills)
-        cur.execute(f"INSERT INTO forids(ID, Skills) VALUES({ID}, {str(skills)}")
-        con.commit()
-        cur.close()
+            if int(message.text) > 10 or int(message.text) < 0:
+                x = 1 / 0
+            if cou < 5:
+                skills.append(int(message.text))
+                if cou == 0:
+                    msg_text = 'Как по шкале от 0 до 10 вы оцените свою физическсую подготовку?'
+                    await bot.send_message(ID, msg_text)
+                elif cou == 1:
+                    msg_text = 'Как по шкале от 0 до 10 вы оцените свою креативность?'
+                    await bot.send_message(ID, msg_text)
+                elif cou == 2:
+                    msg_text = 'Как по шкале от 0 до 10 вы оцените свою эмоциональную устойчивость?'
+                    await bot.send_message(ID, msg_text)
+                elif cou == 3:
+                    msg_text = 'Как по шкале от 0 до 10 вы оцените своё трудолюбие?'
+                    await bot.send_message(ID, msg_text)
+                elif cou == 4:
+                    await asyncio.sleep(1)
+                    await bot.send_message(ID, 'Какую специальность ВУЗа выбираете?', reply_markup=kbs.st_but)
+                    # Подключение к БД
+                    con = sqlite3.connect("SKIILS.db")
+                    # Создание курсора
+                    cur = con.cursor()
+                    # print(skills)
+                    print(str(ID), str(skills))
+                    count = cur.execute(f"""INSERT INTO forids(Id, Skills) VALUES('{str(ID)}', '{str(skills)}')""")
+                    con.commit()
+                    cur.close()
+                cou += 1
+            print(skills)
+            break
+
+
 
 # Запуск бота
 # -----------------------------------------------------
@@ -578,7 +575,7 @@ async def vz13(callback_query: types.CallbackQuery):
             msg_text = f'{i[0].capitalize()} - вы получите до {i[1]} баллов.'
             await bot.send_message(callback_query.from_user.id, msg_text)
     else:
-        await syncio.sleep(2)
+        await asyncio.sleep(2)
         msg_text = f'Извините, но мы не можем вам ничего посоветовать'
         await bot.send_message(callback_query.from_user.id, msg_text)
 
