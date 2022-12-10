@@ -64,39 +64,52 @@ async def cmd_start(message: types.Message):
 
     @dp.message_handler()
     async def crit(message: types.Message):
-        global cou, skills, ID, Name
-        while cou < 5:
-            if int(message.text) > 10 or int(message.text) < 0:
-                x = 1 / 0
-            if cou < 5:
-                skills.append(int(message.text))
-                if cou == 0:
-                    msg_text = 'Как по шкале от 0 до 10 вы оцените свою физическсую подготовку?'
-                    await bot.send_message(ID, msg_text)
-                elif cou == 1:
-                    msg_text = 'Как по шкале от 0 до 10 вы оцените свою креативность?'
-                    await bot.send_message(ID, msg_text)
-                elif cou == 2:
-                    msg_text = 'Как по шкале от 0 до 10 вы оцените свою эмоциональную устойчивость?'
-                    await bot.send_message(ID, msg_text)
-                elif cou == 3:
-                    msg_text = 'Как по шкале от 0 до 10 вы оцените своё трудолюбие?'
-                    await bot.send_message(ID, msg_text)
-                elif cou == 4:
-                    await asyncio.sleep(1)
-                    await bot.send_message(ID, 'Какую специальность ВУЗа выбираете?', reply_markup=kbs.st_but)
+            global cou, skills, ID, Name
+            while cou < 5:
+                try:
                     # Подключение к БД
                     con = sqlite3.connect("SKIILS.db")
                     # Создание курсора
                     cur = con.cursor()
-                    # print(skills)
-                    print(str(ID), str(skills))
-                    count = cur.execute(f"""INSERT INTO forids(Id, Skills) VALUES('{str(ID)}', '{str(skills)}')""")
-                    con.commit()
-                    cur.close()
-                cou += 1
-            print(skills)
-            break
+                    ids = [x[0] for x in cur.execute("select id from forids").fetchall()]
+                    if int(ID) in ids:
+                        msg_text = 'Данные о вас уже есть в базе данных'
+                        await bot.send_message(ID, msg_text)
+                        cou = 4
+                    print(ID, ids)
+                    if int(message.text) > 10 or int(message.text) < 0:
+                        x = 1 / 0
+                    if cou < 5:
+                        skills.append(int(message.text))
+                        if cou == 0:
+                            msg_text = 'Как по шкале от 0 до 10 вы оцените свою физическсую подготовку?'
+                            await bot.send_message(ID, msg_text)
+                        elif cou == 1:
+                            msg_text = 'Как по шкале от 0 до 10 вы оцените свою креативность?'
+                            await bot.send_message(ID, msg_text)
+                        elif cou == 2:
+                            msg_text = 'Как по шкале от 0 до 10 вы оцените свою эмоциональную устойчивость?'
+                            await bot.send_message(ID, msg_text)
+                        elif cou == 3:
+                            msg_text = 'Как по шкале от 0 до 10 вы оцените своё трудолюбие?'
+                            await bot.send_message(ID, msg_text)
+                        elif cou == 4:
+                            await asyncio.sleep(1)
+                            await bot.send_message(ID, 'Какую специальность ВУЗа выбираете?', reply_markup=kbs.st_but)
+                            try:
+                                count = cur.execute(f"""INSERT INTO forids(Id, Skills) VALUES('{str(ID)}', '{str(skills)}')""")
+                            except:
+                                msg_text = 'Данные о вас уже есть в базе данных'
+                                await bot.send_message(ID, msg_text)
+                            con.commit()
+                            cur.close()
+                        cou += 1
+                    print(skills)
+                    break
+                except:
+                    msg_text = 'Пожалуйста, введите целое число от 0 до 10'
+                    await bot.send_message(ID, msg_text)
+                    break
 
 
 
@@ -155,6 +168,12 @@ async def arch_vuz(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V1')
 async def vz1(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ1)
     name = ls.pop(0)
     ls.pop(0)
@@ -162,7 +181,7 @@ async def vz1(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -186,6 +205,12 @@ async def vz1(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V2')
 async def vz2(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ2)
     name = ls.pop(0)
     ls.pop(0)
@@ -193,7 +218,7 @@ async def vz2(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -219,6 +244,12 @@ async def vz2(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V3')
 async def vz3(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ3)
     name = ls.pop(0)
     ls.pop(0)
@@ -226,7 +257,7 @@ async def vz3(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -252,6 +283,12 @@ async def vz3(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V4')
 async def vz4(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ4)
     name = ls.pop(0)
     ls.pop(0)
@@ -259,7 +296,7 @@ async def vz4(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -286,6 +323,12 @@ async def vz4(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V5')
 async def vz5(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ5)
     name = ls.pop(0)
     ls.pop(0)
@@ -293,7 +336,7 @@ async def vz5(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -319,6 +362,12 @@ async def vz5(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V6')
 async def vz6(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ6)
     name = ls.pop(0)
     ls.pop(0)
@@ -352,6 +401,12 @@ async def vz6(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V7')
 async def vz7(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ7)
     name = ls.pop(0)
     ls.pop(0)
@@ -386,6 +441,12 @@ async def vz7(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V8')
 async def vz8(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ8)
     name = ls.pop(0)
     ls.pop(0)
@@ -393,7 +454,7 @@ async def vz8(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -420,6 +481,12 @@ async def vz8(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V9')
 async def vz9(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ9)
     name = ls.pop(0)
     ls.pop(0)
@@ -453,6 +520,12 @@ async def vz9(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V10')
 async def vz10(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ10)
     name = ls.pop(0)
     ls.pop(0)
@@ -460,7 +533,7 @@ async def vz10(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -486,6 +559,12 @@ async def vz10(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V11')
 async def vz11(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ11)
     name = ls.pop(0)
     ls.pop(0)
@@ -493,7 +572,7 @@ async def vz11(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -519,6 +598,13 @@ async def vz11(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V12')
 async def vz12(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
+    print(skills)
     ls = copy.deepcopy(kbs.VUZ12)
     name = ls.pop(0)
     ls.pop(0)
@@ -526,7 +612,7 @@ async def vz12(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -552,6 +638,12 @@ async def vz12(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V13')
 async def vz13(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ13)
     name = ls.pop(0)
     ls.pop(0)
@@ -559,7 +651,7 @@ async def vz13(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -582,6 +674,12 @@ async def vz13(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V14')
 async def vz14(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ14)
     name = ls.pop(0)
     ls.pop(0)
@@ -589,7 +687,7 @@ async def vz14(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -612,6 +710,12 @@ async def vz14(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V15')
 async def vz15(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ15)
     name = ls.pop(0)
     ls.pop(0)
@@ -619,7 +723,7 @@ async def vz15(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -642,6 +746,12 @@ async def vz15(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V16')
 async def vz16(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ16)
     name = ls.pop(0)
     ls.pop(0)
@@ -649,7 +759,7 @@ async def vz16(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -672,6 +782,12 @@ async def vz16(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V17')
 async def vz17(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ17)
     name = ls.pop(0)
     ls.pop(0)
@@ -679,7 +795,7 @@ async def vz17(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -702,6 +818,12 @@ async def vz17(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V18')
 async def vz18(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ18)
     name = ls.pop(0)
     ls.pop(0)
@@ -709,7 +831,7 @@ async def vz18(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -732,6 +854,12 @@ async def vz18(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V19')
 async def vz19(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ19)
     name = ls.pop(0)
     ls.pop(0)
@@ -739,7 +867,7 @@ async def vz19(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -762,6 +890,12 @@ async def vz19(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V20')
 async def vz20(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ20)
     name = ls.pop(0)
     ls.pop(0)
@@ -769,7 +903,7 @@ async def vz20(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -792,6 +926,12 @@ async def vz20(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V21')
 async def vz21(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ21)
     name = ls.pop(0)
     ls.pop(0)
@@ -799,7 +939,7 @@ async def vz21(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -822,6 +962,12 @@ async def vz21(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V22')
 async def vz22(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ22)
     name = ls.pop(0)
     ls.pop(0)
@@ -829,7 +975,7 @@ async def vz22(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -852,6 +998,12 @@ async def vz22(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V23')
 async def vz23(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ23)
     name = ls.pop(0)
     ls.pop(0)
@@ -859,7 +1011,7 @@ async def vz23(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -882,6 +1034,12 @@ async def vz23(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V24')
 async def vz24(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ24)
     name = ls.pop(0)
     ls.pop(0)
@@ -889,7 +1047,7 @@ async def vz24(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -912,6 +1070,12 @@ async def vz24(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V25')
 async def vz25(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ25)
     name = ls.pop(0)
     ls.pop(0)
@@ -919,7 +1083,7 @@ async def vz25(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -942,6 +1106,12 @@ async def vz25(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V26')
 async def vz26(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ26)
     name = ls.pop(0)
     ls.pop(0)
@@ -949,7 +1119,7 @@ async def vz26(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -972,6 +1142,12 @@ async def vz26(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V27')
 async def vz27(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ27)
     name = ls.pop(0)
     ls.pop(0)
@@ -979,7 +1155,7 @@ async def vz27(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -1002,6 +1178,12 @@ async def vz27(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V28')
 async def vz28(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ28)
     name = ls.pop(0)
     ls.pop(0)
@@ -1009,7 +1191,7 @@ async def vz28(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -1032,6 +1214,12 @@ async def vz28(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V29')
 async def vz29(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ29)
     name = ls.pop(0)
     ls.pop(0)
@@ -1039,7 +1227,7 @@ async def vz29(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
@@ -1062,6 +1250,12 @@ async def vz29(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(text='V30')
 async def vz30(callback_query: types.CallbackQuery):
     global skills
+    con = sqlite3.connect("SKIILS.db")
+    # Создание курсора
+    cur = con.cursor()
+    # print(skills)
+    skills = cur.execute(f"""SELECT Skills From forids WHERE ID == '{callback_query.from_user.id}'""").fetchall()[0][0]
+    skills = skills[1:-1].split(', ')
     ls = copy.deepcopy(kbs.VUZ30)
     name = ls.pop(0)
     ls.pop(0)
@@ -1069,7 +1263,7 @@ async def vz30(callback_query: types.CallbackQuery):
     flag = 0
     for activity in ls:
         for i in range(5):
-            if skills[i] >= activity[2][i]:
+            if int(skills[i]) >= activity[2][i]:
                 flag += 1
             else:
                 flag = 0
